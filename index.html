@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ことばカード">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="description" content="2歳向けフラッシュカードアプリ。どうぶつ・たべもの・のりもの・いろ・かず・にもじご">
+  <title>ことばのカード 🌈</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+  <!-- ═══ スプラッシュスクリーン ═══════════════════════════ -->
+  <div id="splash-screen" role="main" aria-label="スプラッシュ画面">
+    <img
+      id="splash-img"
+      class="splash-image"
+      src="assets/images/splash.png"
+      alt="ことばのカード"
+      onerror="this.style.display='none'; document.getElementById('splash-emoji').style.display='block'"
+    >
+    <span id="splash-emoji" style="display:none; font-size: clamp(100px,25vw,180px);">🌈</span>
+    <h1 class="splash-title">ことばのカード</h1>
+    <p class="splash-subtitle">スワイプして かんがえよう！</p>
+    <button id="splash-start-btn" class="splash-start-btn" aria-label="はじめる">
+      ▶ はじめる
+    </button>
+  </div>
+
+  <!-- ═══ メインアプリ ═══════════════════════════════════════ -->
+  <div id="app" aria-label="フラッシュカードアプリ">
+
+    <!-- ヘッダー -->
+    <header id="header" role="banner">
+      <div id="category-badge" aria-label="カテゴリ">
+        <span class="cat-icon" id="header-cat-icon">✨</span>
+        <span id="header-cat-name">ぜんぶ</span>
+      </div>
+      <div id="progress-text" aria-live="polite" aria-label="進捗">1 / 1</div>
+      <button id="settings-btn" aria-label="せってい" title="長押しで設定を開く">⚙️</button>
+    </header>
+
+    <!-- カードエリア -->
+    <main id="card-area" role="main" aria-label="フラッシュカード表示エリア">
+      <!-- カードは JS で動的に生成 -->
+
+      <!-- ナビボタン（スワイプできない場合用） -->
+      <button id="nav-left"  aria-label="まえのカード">◀</button>
+      <button id="nav-right" aria-label="つぎのカード">▶</button>
+
+      <!-- デッキ完了オーバーレイ -->
+      <div id="deck-complete" role="dialog" aria-modal="true" aria-label="デッキ完了">
+        <div class="complete-emoji">🎉</div>
+        <h2 class="complete-title">ぜんぶ みたよ！</h2>
+        <p class="complete-subtitle">よくできました ⭐</p>
+        <button class="complete-again-btn" id="again-btn" aria-label="もう一度">
+          🔄 もういちど！
+        </button>
+      </div>
+    </main>
+
+    <!-- フッター -->
+    <footer id="footer" role="contentinfo">
+      <!-- プログレスドット -->
+      <div id="progress-dots" aria-hidden="true"></div>
+
+      <!-- カテゴリフィルター -->
+      <nav id="category-btns" aria-label="カテゴリ選択"></nav>
+    </footer>
+
+  </div><!-- /#app -->
+
+  <!-- スクリプト -->
+  <script src="js/cards-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Service Worker の登録 (PWA / オフライン対応)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('ServiceWorker registered:', reg.scope))
+          .catch(err => console.log('ServiceWorker registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>

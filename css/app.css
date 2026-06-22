@@ -1,0 +1,596 @@
+/* ═══════════════════════════════════════════════════════════════
+   app.css — フラッシュカードアプリ メインスタイル
+   対象端末: スマホ・タブレット（縦向き中心）
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+/* ─── CSS リセット & 基本設定 ─────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --font-main: 'Noto Sans JP', 'Hiragino Maru Gothic ProN', 'ヒラギノ丸ゴ ProN', sans-serif;
+  --anim-fast: 0.2s;
+  --anim-normal: 0.35s;
+  --anim-slow: 0.5s;
+  --card-radius: 32px;
+  --shadow-card: 0 20px 60px rgba(0,0,0,0.18), 0 6px 20px rgba(0,0,0,0.12);
+  --shadow-btn: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: pan-y;
+  font-family: var(--font-main);
+  background: #f0f4f8;
+}
+
+/* ─── スプラッシュスクリーン ──────────────────────────────── */
+#splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fde68a 0%, #f9a8d4 50%, #c4b5fd 100%);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+#splash-screen.hidden {
+  opacity: 0;
+  transform: scale(1.1);
+  pointer-events: none;
+}
+
+.splash-image {
+  width: min(280px, 70vw);
+  height: min(280px, 70vw);
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  animation: splashBounce 1.5s ease infinite;
+}
+
+@keyframes splashBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+
+.splash-title {
+  margin-top: 28px;
+  font-size: clamp(28px, 8vw, 48px);
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.2);
+  letter-spacing: 0.06em;
+}
+
+.splash-subtitle {
+  margin-top: 8px;
+  font-size: clamp(14px, 4vw, 20px);
+  color: rgba(255,255,255,0.85);
+}
+
+.splash-start-btn {
+  margin-top: 40px;
+  padding: 18px 52px;
+  font-family: var(--font-main);
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 700;
+  color: #7c3aed;
+  background: #fff;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: transform var(--anim-fast), box-shadow var(--anim-fast);
+  animation: splashBtnPulse 2s ease infinite;
+}
+
+@keyframes splashBtnPulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(0,0,0,0.15), 0 0 0 0 rgba(255,255,255,0.6); }
+  50%       { box-shadow: 0 4px 16px rgba(0,0,0,0.15), 0 0 0 14px rgba(255,255,255,0); }
+}
+
+.splash-start-btn:active {
+  transform: scale(0.95);
+}
+
+/* ─── メインアプリラッパー ────────────────────────────────── */
+#app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f0f4f8;
+}
+
+/* ─── ヘッダー ────────────────────────────────────────────── */
+#header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(env(safe-area-inset-top), 12px) 16px 10px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+#category-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: linear-gradient(135deg, #fde68a, #fb923c);
+  border-radius: 50px;
+  font-size: clamp(13px, 3.5vw, 16px);
+  font-weight: 700;
+  color: #7c2d12;
+  box-shadow: 0 2px 8px rgba(251,146,60,0.4);
+}
+
+#category-badge .cat-icon {
+  font-size: 1.2em;
+}
+
+#progress-text {
+  font-size: clamp(12px, 3vw, 15px);
+  color: #64748b;
+  font-weight: 700;
+}
+
+#settings-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform var(--anim-fast), background var(--anim-fast);
+}
+
+#settings-btn:active {
+  transform: scale(0.9);
+  background: #e2e8f0;
+}
+
+/* ─── カードエリア ────────────────────────────────────────── */
+#card-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── フラッシュカード ────────────────────────────────────── */
+.flash-card {
+  position: absolute;
+  width: calc(100% - 32px);
+  max-width: 520px;
+  height: 100%;
+  max-height: 640px;
+  border-radius: var(--card-radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px 28px;
+  box-shadow: var(--shadow-card);
+  user-select: none;
+  cursor: pointer;
+  will-change: transform, opacity;
+  transition: box-shadow var(--anim-fast);
+  overflow: hidden;
+}
+
+.flash-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  background: rgba(255,255,255,0.45);
+  pointer-events: none;
+}
+
+/* カードアニメーション */
+.flash-card.entering-from-right {
+  transform: translateX(110%);
+  opacity: 0;
+}
+.flash-card.entering-from-left {
+  transform: translateX(-110%);
+  opacity: 0;
+}
+.flash-card.active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform var(--anim-normal) cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity var(--anim-normal) ease;
+}
+.flash-card.leaving-to-left {
+  transform: translateX(-110%);
+  opacity: 0;
+  transition: transform var(--anim-normal) cubic-bezier(0.55, 0.06, 0.68, 0.19),
+              opacity var(--anim-normal) ease;
+}
+.flash-card.leaving-to-right {
+  transform: translateX(110%);
+  opacity: 0;
+  transition: transform var(--anim-normal) cubic-bezier(0.55, 0.06, 0.68, 0.19),
+              opacity var(--anim-normal) ease;
+}
+
+/* ドラッグ中のカード */
+.flash-card.dragging {
+  transition: none !important;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+}
+
+/* ─── カード内コンテンツ ──────────────────────────────────── */
+.card-visual {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* 絵文字カード */
+.card-emoji {
+  font-size: clamp(100px, 30vw, 200px);
+  line-height: 1;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+  animation: emojiFloat 3s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+@keyframes emojiFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%       { transform: translateY(-10px) rotate(2deg); }
+}
+
+/* 画像カード */
+.card-image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 16px;
+  filter: drop-shadow(0 6px 20px rgba(0,0,0,0.15));
+}
+
+/* 色カード */
+.card-color-swatch {
+  width: clamp(140px, 40vw, 200px);
+  height: clamp(140px, 40vw, 200px);
+  border-radius: 50%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2), 0 0 0 8px rgba(255,255,255,0.5);
+  animation: emojiFloat 3s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* 数字カード */
+.card-numeral {
+  font-size: clamp(120px, 35vw, 220px);
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(0,0,0,0.75);
+  text-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  animation: emojiFloat 3s ease-in-out infinite;
+  letter-spacing: -0.02em;
+}
+
+/* ─── カード名テキスト ─────────────────────────────────────── */
+.card-name-wrap {
+  width: 100%;
+  text-align: center;
+  margin-top: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.card-name {
+  display: block;
+  font-size: clamp(28px, 9vw, 56px);
+  font-weight: 900;
+  color: rgba(0,0,0,0.8);
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-shadow: 0 2px 8px rgba(255,255,255,0.6);
+}
+
+/* にもじご — 二行表示 */
+.card-name.twoword {
+  font-size: clamp(22px, 7vw, 44px);
+  line-height: 1.4;
+}
+
+/* 数字カード読み仮名 */
+.card-reading {
+  display: block;
+  font-size: clamp(16px, 5vw, 28px);
+  font-weight: 700;
+  color: rgba(0,0,0,0.55);
+  margin-top: 4px;
+  letter-spacing: 0.1em;
+}
+
+/* ─── 音声再生ボタン ──────────────────────────────────────── */
+.card-speak-btn {
+  margin-top: 16px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  transition: transform var(--anim-fast), background var(--anim-fast);
+  position: relative;
+  z-index: 1;
+}
+
+.card-speak-btn:hover {
+  transform: scale(1.05);
+  background: #ffffff;
+}
+
+.card-speak-btn:active {
+  transform: scale(0.9);
+}
+
+.card-speak-btn.speaking {
+  animation: speakPulse 0.6s ease infinite;
+  background: rgba(255,255,255,0.95);
+}
+
+@keyframes speakPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+  50%       { transform: scale(1.1); box-shadow: 0 6px 24px rgba(0,0,0,0.2); }
+}
+
+/* ─── スワイプヒント ──────────────────────────────────────── */
+.swipe-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 5;
+}
+
+.swipe-hint.fade-out {
+  opacity: 0;
+}
+
+/* ─── 下部フッター ────────────────────────────────────────── */
+#footer {
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 10px 12px max(env(safe-area-inset-bottom), 10px);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+}
+
+/* プログレスドット */
+#progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  max-height: 20px;
+  overflow: hidden;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: background var(--anim-fast), transform var(--anim-fast);
+  flex-shrink: 0;
+}
+
+.dot.active {
+  background: #7c3aed;
+  transform: scale(1.4);
+}
+
+.dot.seen {
+  background: #a5b4fc;
+}
+
+/* カテゴリボタン行 */
+#category-btns {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#category-btns::-webkit-scrollbar { display: none; }
+
+.cat-btn {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border-radius: 50px;
+  border: 2px solid transparent;
+  background: #f1f5f9;
+  font-family: var(--font-main);
+  font-size: clamp(11px, 3vw, 13px);
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all var(--anim-fast);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cat-btn:active {
+  transform: scale(0.95);
+}
+
+.cat-btn.active {
+  background: #7c3aed;
+  color: #fff;
+  border-color: #7c3aed;
+  box-shadow: 0 3px 10px rgba(124,58,237,0.35);
+}
+
+/* ─── デッキ完了オーバーレイ ─────────────────────────────── */
+#deck-complete {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(124, 58, 237, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+#deck-complete.visible {
+  display: flex;
+}
+
+.complete-emoji {
+  font-size: 80px;
+  animation: completeBounce 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+@keyframes completeBounce {
+  0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.complete-title {
+  font-size: clamp(24px, 7vw, 36px);
+  font-weight: 900;
+  color: #fff;
+}
+
+.complete-subtitle {
+  font-size: clamp(14px, 4vw, 18px);
+  color: rgba(255,255,255,0.8);
+}
+
+.complete-again-btn {
+  margin-top: 8px;
+  padding: 16px 48px;
+  background: #fff;
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-main);
+  font-size: clamp(16px, 5vw, 22px);
+  font-weight: 700;
+  color: #7c3aed;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transition: transform var(--anim-fast);
+}
+
+.complete-again-btn:active {
+  transform: scale(0.95);
+}
+
+/* ─── ナビボタン（左右矢印）────────────────────────────────── */
+#nav-left, #nav-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(8px);
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  transition: transform var(--anim-fast), background var(--anim-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+}
+
+#nav-left  { left: 4px; }
+#nav-right { right: 4px; }
+
+#nav-left:active, #nav-right:active {
+  transform: translateY(-50%) scale(0.9);
+  background: rgba(255,255,255,0.95);
+}
+
+/* ─── レスポンシブ調整 ────────────────────────────────────── */
+/* タブレット横向き */
+@media (min-width: 768px) and (orientation: landscape) {
+  .card-emoji    { font-size: min(25vw, 160px); }
+  .card-numeral  { font-size: min(28vw, 180px); }
+  .card-name     { font-size: clamp(28px, 6vw, 52px); }
+}
+
+/* 大画面タブレット */
+@media (min-width: 1024px) {
+  #card-area { padding: 24px 80px; }
+  .flash-card { max-height: 720px; }
+}
+
+/* ─── ユーティリティ ──────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* アクセシビリティ */
+@media (prefers-reduced-motion: reduce) {
+  .card-emoji, .card-numeral, .card-color-swatch { animation: none; }
+  .splash-image { animation: none; }
+}
