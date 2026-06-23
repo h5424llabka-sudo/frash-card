@@ -522,19 +522,8 @@ function showSwipeHint() {
   }, 3000);
 }
 
-// ─── 設定ボタン（長押しで管理画面へ）─────────────────────────
-let settingsPressTimer = null;
-
-settingsBtn.addEventListener('pointerdown', () => {
-  settingsPressTimer = setTimeout(() => {
-    window.location.href = 'admin.html';
-  }, 800);
-});
-
-settingsBtn.addEventListener('pointerup', () => clearTimeout(settingsPressTimer));
-settingsBtn.addEventListener('pointercancel', () => clearTimeout(settingsPressTimer));
-settingsBtn.addEventListener('contextmenu', (e) => {
-  e.preventDefault();
+// ─── 設定ボタン（タップで管理画面へ）─────────────────────────
+settingsBtn.addEventListener('click', () => {
   window.location.href = 'admin.html';
 });
 

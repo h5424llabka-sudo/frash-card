@@ -128,7 +128,7 @@ function renderCardGrid() {
     } else if (card.colorSwatch) {
       visualHtml = `<div class="card-item-swatch" style="background:${card.colorSwatch};"></div>`;
     } else if (card.numeral != null) {
-      const NUM_COLORS = ['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#10b981','#f43f5e'];
+      const NUM_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f43f5e'];
       const idx = parseInt(card.numeral) - 1;
       const col = (idx >= 0 && idx < NUM_COLORS.length) ? NUM_COLORS[idx] : '#374151';
       visualHtml = `<span class="card-item-numeral" style="color:${col};">${card.numeral}</span>`;
@@ -196,12 +196,12 @@ function openEditModal(cardId) {
   $('modal-title').textContent = 'カードを編集';
 
   // フォームにデータをセット
-  $('form-category').value  = card.category;
-  $('form-name').value      = card.name;
-  $('form-reading').value   = card.reading || '';
-  $('form-emoji').value     = card.emoji || '';
-  $('form-numeral').value   = card.numeral || '';
-  $('form-bgcolor').value   = card.bgColor || '#fff7ed';
+  $('form-category').value = card.category;
+  $('form-name').value = card.name;
+  $('form-reading').value = card.reading || '';
+  $('form-emoji').value = card.emoji || '';
+  $('form-numeral').value = card.numeral || '';
+  $('form-bgcolor').value = card.bgColor || '#fff7ed';
   $('form-bgcolor-text').value = card.bgColor || '#fff7ed';
 
   // タイプ判定
@@ -248,21 +248,25 @@ function closeModal() {
 
 // ─── フォームリセット ─────────────────────────────────────
 function resetForm() {
-  $('form-category').value  = 'animals';
-  $('form-type').value      = 'emoji';
-  $('form-name').value      = '';
-  $('form-reading').value   = '';
-  $('form-emoji').value     = '🐶';
-  $('form-numeral').value   = '';
-  $('form-color').value     = '#ef4444';
+  $('form-category').value = 'animals';
+  $('form-type').value = 'emoji';
+  $('form-name').value = '';
+  $('form-reading').value = '';
+  $('form-emoji').value = '🐶';
+  $('form-numeral').value = '';
+  $('form-color').value = '#ef4444';
   $('form-color-text').value = '#ef4444';
-  $('form-bgcolor').value   = '#fff7ed';
+  $('form-bgcolor').value = '#fff7ed';
   $('form-bgcolor-text').value = '#fff7ed';
   $('form-image-url').value = '';
   $('image-preview-wrap').classList.remove('visible');
   $('audio-status').textContent = '未設定（TTSを使用）';
   $('audio-status').className = 'audio-status';
   $('clear-audio-btn').classList.add('hidden');
+  const recBtn = $('record-audio-btn');
+  const stopBtn = $('stop-record-btn');
+  if (recBtn) recBtn.classList.remove('hidden');
+  if (stopBtn) stopBtn.classList.add('hidden');
   updateTypeFields();
   updatePreview();
 }
@@ -270,19 +274,19 @@ function resetForm() {
 // ─── 表示タイプ切替 ────────────────────────────────────────
 function updateTypeFields() {
   const type = $('form-type').value;
-  $('field-emoji').classList.toggle('hidden',   type !== 'emoji');
+  $('field-emoji').classList.toggle('hidden', type !== 'emoji');
   $('field-numeral').classList.toggle('hidden', type !== 'number');
-  $('field-color').classList.toggle('hidden',   type !== 'color');
-  $('field-image').classList.toggle('hidden',   type !== 'image');
+  $('field-color').classList.toggle('hidden', type !== 'color');
+  $('field-image').classList.toggle('hidden', type !== 'image');
 }
 
 // ─── プレビュー更新 ────────────────────────────────────────
 function updatePreview() {
-  const type    = $('form-type').value;
-  const name    = $('form-name').value || 'なまえ';
-  const emoji   = $('form-emoji').value || '❓';
+  const type = $('form-type').value;
+  const name = $('form-name').value || 'なまえ';
+  const emoji = $('form-emoji').value || '❓';
   const numeral = $('form-numeral').value;
-  const color   = $('form-color').value;
+  const color = $('form-color').value;
   const bgcolor = $('form-bgcolor').value || '#f8fafc';
 
   const vw = $('preview-visual');
@@ -318,13 +322,13 @@ function showImagePreview(dataUrl, filename) {
 // ─── カード保存 ────────────────────────────────────────────
 function saveCard() {
   const category = $('form-category').value;
-  const type     = $('form-type').value;
-  const name     = $('form-name').value.trim();
-  const reading  = $('form-reading').value.trim();
-  const emoji    = $('form-emoji').value.trim();
-  const numeral  = $('form-numeral').value.trim();
-  const color    = $('form-color').value;
-  const bgcolor  = $('form-bgcolor').value;
+  const type = $('form-type').value;
+  const name = $('form-name').value.trim();
+  const reading = $('form-reading').value.trim();
+  const emoji = $('form-emoji').value.trim();
+  const numeral = $('form-numeral').value.trim();
+  const color = $('form-color').value;
+  const bgcolor = $('form-bgcolor').value;
   const imageUrl = $('form-image-url').value.trim();
 
   // バリデーション
@@ -336,16 +340,16 @@ function saveCard() {
 
   // カードオブジェクト構築
   const card = {
-    id:       AdminState.editingId || `card_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
+    id: AdminState.editingId || `card_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
     name,
-    reading:  reading || name,
+    reading: reading || name,
     category,
-    emoji:    null,
+    emoji: null,
     colorSwatch: null,
-    numeral:  null,
-    image:    null,
-    audio:    AdminState.audioDataUrl || null,
-    bgColor:  bgcolor || '#fff7ed',
+    numeral: null,
+    image: null,
+    audio: AdminState.audioDataUrl || null,
+    bgColor: bgcolor || '#fff7ed',
   };
 
   if (type === 'emoji') {
@@ -391,10 +395,10 @@ function deleteCard(cardId) {
 function exportCards() {
   const json = JSON.stringify(AdminState.cards, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
   const date = new Date().toISOString().slice(0, 10);
-  a.href     = url;
+  a.href = url;
   a.download = `flashcard_backup_${date}.json`;
   a.click();
   URL.revokeObjectURL(url);
@@ -435,18 +439,18 @@ function resetCards() {
 function loadSettings() {
   try {
     const s = JSON.parse(localStorage.getItem('flashcard_settings') || '{}');
-    if (s.rate  != null) { $('setting-speed').value = s.rate;  $('speed-val').textContent = `${s.rate} 倍速`; }
+    if (s.rate != null) { $('setting-speed').value = s.rate; $('speed-val').textContent = `${s.rate} 倍速`; }
     if (s.pitch != null) { $('setting-pitch').value = s.pitch; $('pitch-val').textContent = s.pitch; }
     if (s.voice != null) { $('setting-voice').value = s.voice; }
     if (s.autoplay != null) { $('setting-autoplay').checked = s.autoplay; }
-  } catch {}
+  } catch { }
 }
 
 function saveSettings() {
   const settings = {
-    rate:     parseFloat($('setting-speed').value),
-    pitch:    parseFloat($('setting-pitch').value),
-    voice:    $('setting-voice').value,
+    rate: parseFloat($('setting-speed').value),
+    pitch: parseFloat($('setting-pitch').value),
+    voice: $('setting-voice').value,
     autoplay: $('setting-autoplay').checked,
   };
   localStorage.setItem('flashcard_settings', JSON.stringify(settings));
@@ -496,7 +500,7 @@ function setupEvents() {
   $('modal-save-btn').addEventListener('click', saveCard);
 
   // フォーム変更 → プレビュー更新
-  ['form-name','form-emoji','form-numeral','form-color','form-bgcolor'].forEach(id => {
+  ['form-name', 'form-emoji', 'form-numeral', 'form-color', 'form-bgcolor'].forEach(id => {
     $(id).addEventListener('input', updatePreview);
   });
 
@@ -578,6 +582,57 @@ function setupEvents() {
     }
   });
 
+  // 録音機能
+  const recordBtn = $('record-audio-btn');
+  const stopBtn = $('stop-record-btn');
+  let mediaRecorder = null;
+  let audioChunks = [];
+
+  if (recordBtn && stopBtn) {
+    recordBtn.addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.addEventListener('dataavailable', e => {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        });
+
+        mediaRecorder.addEventListener('stop', () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          const reader = new FileReader();
+          reader.onload = ev => {
+            AdminState.audioDataUrl = ev.target.result;
+            $('audio-status').textContent = '録音済み音声';
+            $('audio-status').className = 'audio-status has-file';
+            $('clear-audio-btn').classList.remove('hidden');
+          };
+          reader.readAsDataURL(audioBlob);
+          
+          // ストリームのトラックを停止
+          stream.getTracks().forEach(track => track.stop());
+        });
+
+        mediaRecorder.start();
+        recordBtn.classList.add('hidden');
+        stopBtn.classList.remove('hidden');
+        $('audio-status').textContent = '録音中...';
+        $('audio-status').className = 'audio-status text-danger';
+      } catch (err) {
+        showToast('マイクエラー: ' + err.message, 'danger');
+      }
+    });
+
+    stopBtn.addEventListener('click', () => {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        recordBtn.classList.remove('hidden');
+        stopBtn.classList.add('hidden');
+      }
+    });
+  }
+
   // 音声ファイル
   $('form-audio-file').addEventListener('change', e => {
     const file = e.target.files[0];
@@ -626,8 +681,8 @@ function setupEvents() {
   $('test-tts-btn').addEventListener('click', () => {
     if (!('speechSynthesis' in window)) { showToast('音声合成非対応のブラウザです', 'danger'); return; }
     const u = new SpeechSynthesisUtterance('いぬ、ねこ、うさぎ');
-    u.lang  = 'ja-JP';
-    u.rate  = parseFloat($('setting-speed').value);
+    u.lang = 'ja-JP';
+    u.rate = parseFloat($('setting-speed').value);
     u.pitch = parseFloat($('setting-pitch').value);
     const selVoice = $('setting-voice').value;
     if (selVoice) {

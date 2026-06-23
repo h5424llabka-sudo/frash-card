@@ -273,10 +273,12 @@
 
           <!-- 音声ファイル -->
           <div class="form-group">
-            <label>🎵 音声ファイル（任意）</label>
+            <label>🎵 音声（任意）</label>
             <div class="audio-controls">
+              <button id="record-audio-btn" class="btn btn-outline btn-sm" type="button">🎙️ 録音する</button>
+              <button id="stop-record-btn" class="btn btn-danger btn-sm hidden" type="button">⏹️ 停止</button>
               <div style="position:relative;">
-                <button class="btn btn-ghost btn-sm">📁 音声ファイル</button>
+                <button class="btn btn-ghost btn-sm" type="button">📁 ファイル選択</button>
                 <input
                   id="form-audio-file"
                   type="file"
@@ -284,7 +286,7 @@
                   style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;"
                 >
               </div>
-              <button id="clear-audio-btn" class="btn btn-ghost btn-sm hidden">× 削除</button>
+              <button id="clear-audio-btn" class="btn btn-ghost btn-sm hidden" type="button">× 削除</button>
               <span class="audio-status" id="audio-status">未設定（TTSを使用）</span>
             </div>
           </div>
